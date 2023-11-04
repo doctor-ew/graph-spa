@@ -44,7 +44,7 @@ export async function getServerSideProps(context: NextPageContext) {
         });
 
         const data = await res.json();
-
+        console.log('|-o-| data: ',data);
         if (!res.ok) {
             console.error('Response not ok:', res);
             throw new Error(`Failed to fetch: ${res.status} ${res.statusText}`);
