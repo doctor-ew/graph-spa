@@ -1,0 +1,28 @@
+// pages/index.tsx
+import React from 'react';
+import Link from 'next/link';
+
+const HomePage = () => {
+    return (
+        <div>
+            <h1>Welcome to the GraphQL Explorer</h1>
+            <p>This is a simple app to explore GraphQL APIs.</p>
+            <nav>
+                <ul>
+                    <li>
+                        <Link href="/rick-and-morty">
+                            <a>Rick and Morty</a>
+                        </Link>
+                    </li>
+                    <li>
+                        <Link href="/travel-trends">
+                            <a>Travel Trends</a>
+                        </Link>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    );
+};
+
+export default HomePage;
