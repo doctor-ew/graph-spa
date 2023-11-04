@@ -14,9 +14,13 @@ services:
     environment:
       - NODE_ENV=production
     command: yarn start
+    networks:
+      - mynetwork
 
   redis:
     image: "redis:latest"
+    networks:
+      - mynetwork
     ports:
       - "6379:6379"
 
@@ -29,3 +33,8 @@ services:
     environment:
       - NODE_ENV=production
     command: yarn start
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:

@@ -1,50 +1,64 @@
 import React from 'react';
 import { NextPageContext } from 'next';
 
+// Define a more specific type for your data if possible
+interface RickAndMortyData {
+    rickAndMortyAssociations: {
+        rick: Array<{
+            id: string;
+            name: string;
+            // ... other properties
+        }>;
+        morties: Array<{
+            id: string;
+            name: string;
+            // ... other properties
+        }>;
+    };
+}
+
 interface RickAndMortyProps {
-    data?: any; // You should replace 'any' with the actual data type you expect
+    data?: RickAndMortyData;
     errors?: string;
 }
 
-// This is the React component that represents the page content
 const RickAndMortyPage: React.FC<RickAndMortyProps> = ({ data, errors }) => {
-    // Render your page with data and handle errors
     if (errors) {
+        // Log the error to the console for server-side debugging
+        console.error('Error rendering page:', errors);
         return <div>Error: {errors}</div>;
     }
 
-    // Assuming 'data' contains the fetched data, render it accordingly
     return (
         <div>
             <h1>Rick and Morty Data</h1>
-            {/* Display your Rick and Morty data here */}
-            {/* This is a simplistic rendering example */}
-            {data && data.rickAndMortyAssociations && (
-                <div>
+            {data?.rickAndMortyAssociations ? (
+                <>
                     <h2>Ricks</h2>
-                    {data.rickAndMortyAssociations.rick.map((rick:any) => (
+                    {data.rickAndMortyAssociations.rick.map((rick) => (
                         <div key={rick.id}>
                             <p>{rick.name}</p>
                             {/* Add more details as needed */}
                         </div>
                     ))}
                     <h2>Morties</h2>
-                    {data.rickAndMortyAssociations.morties.map((morty:any) => (
+                    {data.rickAndMortyAssociations.morties.map((morty) => (
                         <div key={morty.id}>
                             <p>{morty.name}</p>
                             {/* Add more details as needed */}
                         </div>
                     ))}
-                </div>
+                </>
+            ) : (
+                <p>No data available.</p>
             )}
         </div>
     );
 };
 
-// This function runs on the server and gets the data for the page
 export async function getServerSideProps(context: NextPageContext): Promise<{ props: RickAndMortyProps }> {
     try {
-        const res = await fetch('http://localhost:4000/rickmorty', {
+        const res = await fetch('http://backend:4000/rickmorty', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -56,28 +70,12 @@ export async function getServerSideProps(context: NextPageContext): Promise<{ pr
               rick {
                 id
                 name
-                status
-                species
-                type
-                gender
-                image
-                episode {
-                  id
-                  name
-                }
+                // ... other fields
               }
               morties {
                 id
                 name
-                status
-                species
-                type
-                gender
-                image
-                episode {
-                  id
-                  name
-                }
+                // ... other fields
               }
             }
           }
@@ -88,25 +86,27 @@ export async function getServerSideProps(context: NextPageContext): Promise<{ pr
         const data = await res.json();
 
         if (!res.ok) {
-            console.error('Response not ok:', res);
-            throw new Error(`Failed to fetch: ${res.status} ${res.statusText}`);
+            const error = `Failed to fetch: ${res.status} ${res.statusText}`;
+            console.error('Response not ok:', res, 'Error:', error);
+            throw new Error(error);
         }
 
         if (data.errors) {
+            const error = 'Failed to fetch GraphQL data.';
             console.error('GraphQL Errors:', data.errors);
-            throw new Error('Failed to fetch GraphQL data.');
+            throw new Error(error);
         }
 
         return {
             props: { data: data.data },
         };
-    } catch (error: any) {
+    } catch (error) {
+        // Log the error for server-side debugging
         console.error('Error in getServerSideProps:', error);
         return {
-            props: { errors: error.message },
+            props: { errors: error instanceof Error ? error.message : 'An error occurred' },
         };
     }
 }
 
-// Make sure to export the React component as the default export
 export default RickAndMortyPage;
