@@ -54,7 +54,7 @@ const RickAndMortyPage: React.FC<RickAndMortyProps> = ({ data, errors }) => {
             <h1>Rick and Morty Data</h1>
             {data?.rickAndMortyAssociations?.map((association, index) => (
                 <div key={association.rick.id}>
-                    <h2>Rick</h2>
+                    <h2>Rick: {association.rick.id}</h2>
                     <p>Name: {association.rick.name}</p>
                     <p>Origin: {association.rick.origin?.name}</p>
                     <p>Location: {association.rick.location?.name}</p>

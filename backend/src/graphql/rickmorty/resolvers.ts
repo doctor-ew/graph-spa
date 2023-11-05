@@ -29,9 +29,11 @@ const rickMortyResolvers = {
                             gender
                             image
                             origin {
+                                id
                                 name
                             }
                             location {
+                                id
                                 name
                             }
                             episode {
