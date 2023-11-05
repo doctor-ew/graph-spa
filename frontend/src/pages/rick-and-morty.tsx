@@ -5,12 +5,16 @@ import { NextPageContext } from 'next';
 interface Rick {
     id: string;
     name: string;
+    origin: {id:string,name:string};
+    location: {id:string,name:string};
     // ... other fields
 }
 
 interface Morty {
     id: string;
     name: string;
+    origin: {id:string,name:string};
+    location: {id:string,name:string};
     // ... other fields
 }
 
@@ -49,20 +53,21 @@ const RickAndMortyPage: React.FC<RickAndMortyProps> = ({ data, errors }) => {
         <div>
             <h1>Rick and Morty Data</h1>
             {data?.rickAndMortyAssociations?.map((association, index) => (
-                <div key={index}>
+                <div key={association.rick.id}>
                     <h2>Rick</h2>
-                    <div key={association?.rick?.id}> {/* No need for optional chaining here */}
-                        <p>{association?.rick?.name}</p>
-                        {/* Add more details as needed */}
-                    </div>
-                    <h2>Morties</h2>
-                    {association?.morties?.map((morty) => (
-                        <div key={morty?.id}>
-                            <p>{morty?.name}</p>
-                            {/* Add more details as needed */}
+                    <p>Name: {association.rick.name}</p>
+                    <p>Origin: {association.rick.origin?.name}</p>
+                    <p>Location: {association.rick.location?.name}</p>
+                    <h2>Associated Morties</h2>
+                    {association.morties.map((morty) => (
+                        <div key={morty.id}>
+                            <p>Name: {morty.name}</p>
+                            <p>Origin: {morty.origin?.name}</p>
+                            <p>Location: {morty.location?.name}</p>
                         </div>
                     ))}
                 </div>
+
             ))}
         </div>
     );

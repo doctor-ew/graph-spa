@@ -18,23 +18,29 @@ const rickMortyResolvers = {
             }
 
             const query = `
-    {
-        characters(filter: {name: "${args.name}"}) {
-            results {
-                id
-                name
-                status
-                species
-                type
-                gender
-                image
-                episode {
-                    id
-                    name
-                }
-            }
-        }
-    }`;
+                {
+                    characters(filter: {name: "${args.name}"}) {
+                        results {
+                            id
+                            name
+                            status
+                            species
+                            type
+                            gender
+                            image
+                            origin {
+                                name
+                            }
+                            location {
+                                name
+                            }
+                            episode {
+                                id
+                                name
+                            }
+                        }
+                    }
+                }`;
 
             try {
                 const response = await axios.post('https://rickandmortyapi.com/graphql', {query});
@@ -63,14 +69,11 @@ const rickMortyResolvers = {
         rickAndMortyAssociations: async (_: any, _args: any, context: any) => {
             const ricks = await rickMortyResolvers.Query.charactersByName(_, {name: "Rick"}, context);
             const morties = await rickMortyResolvers.Query.charactersByName(_, {name: "Morty"}, context);
-            console.log('|-o-| Ricks:',ricks, '|-o-| Morties:', morties);
-            return ricks.map((rick: any) => {
-                const associatedMorties = morties.filter((morty: any) => {
-                    const commonEpisodes = morty.episode.filter((mortyEpisode: any) =>
-                        rick.episode.some((rickEpisode: any) => rickEpisode.id === mortyEpisode.id)
-                    );
-                    // This is a simple heuristic. You can adjust the logic as needed.
-                    return commonEpisodes.length > 2;
+            console.log('|-o-| Ricks:', ricks, '|-o-| Morties:', morties);
+            return ricks.map((rick:any) => {
+                const associatedMorties = morties.filter((morty:any) => {
+                    // Compare origins and locations here
+                    return rick.origin.name === morty.origin.name || rick.location.name === morty.location.name;
                 });
 
                 return {
@@ -78,6 +81,7 @@ const rickMortyResolvers = {
                     morties: associatedMorties
                 };
             });
+
         }
 
     }

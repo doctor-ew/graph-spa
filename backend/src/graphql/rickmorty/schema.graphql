@@ -5,11 +5,18 @@ type Character {
     species: String
     type: String
     gender: String
+    origin: Location
+    location: Location
     image: String
     episode: [Episode]
 }
 
 type Episode {
+    id: ID!
+    name: String!
+}
+
+type Location {
     id: ID!
     name: String!
 }
