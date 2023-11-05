@@ -1,20 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NextPageContext } from 'next';
 
-// Define a more specific type for your data if possible
+// Define the types for the data you expect
+interface Rick {
+    id: string;
+    name: string;
+    // ... other fields
+}
+
+interface Morty {
+    id: string;
+    name: string;
+    // ... other fields
+}
+
+interface RickAndMortyAssociations {
+    rick: Rick; // Not an array
+    morties: Morty[]; // An array of Morty objects
+}
+
 interface RickAndMortyData {
-    rickAndMortyAssociations: {
-        rick: Array<{
-            id: string;
-            name: string;
-            // ... other properties
-        }>;
-        morties: Array<{
-            id: string;
-            name: string;
-            // ... other properties
-        }>;
-    };
+    rickAndMortyAssociations: RickAndMortyAssociations[];
 }
 
 interface RickAndMortyProps {
@@ -22,40 +28,49 @@ interface RickAndMortyProps {
     errors?: string;
 }
 
+
+// This is the React component that represents the page content
 const RickAndMortyPage: React.FC<RickAndMortyProps> = ({ data, errors }) => {
+    useEffect(() => {
+        console.log('|-D-| data:', data);
+        console.log('|-A-| data:', data?.rickAndMortyAssociations);
+        // Assign to a window variable for inspection
+        if (data) {
+            (window as any).myDebugData = data;
+        }
+    }, [data]); // This will run when `data` changes
+
     if (errors) {
-        // Log the error to the console for server-side debugging
-        console.error('Error rendering page:', errors);
         return <div>Error: {errors}</div>;
     }
+
 
     return (
         <div>
             <h1>Rick and Morty Data</h1>
-            {data?.rickAndMortyAssociations ? (
-                <>
-                    <h2>Ricks</h2>
-                    {data.rickAndMortyAssociations.rick.map((rick) => (
-                        <div key={rick.id}>
-                            <p>{rick.name}</p>
-                            {/* Add more details as needed */}
-                        </div>
-                    ))}
+            {data?.rickAndMortyAssociations?.map((association, index) => (
+                <div key={index}>
+                    <h2>Rick</h2>
+                    <div key={association?.rick?.id}> {/* No need for optional chaining here */}
+                        <p>{association?.rick?.name}</p>
+                        {/* Add more details as needed */}
+                    </div>
                     <h2>Morties</h2>
-                    {data.rickAndMortyAssociations.morties.map((morty) => (
-                        <div key={morty.id}>
-                            <p>{morty.name}</p>
+                    {association?.morties?.map((morty) => (
+                        <div key={morty?.id}>
+                            <p>{morty?.name}</p>
                             {/* Add more details as needed */}
                         </div>
                     ))}
-                </>
-            ) : (
-                <p>No data available.</p>
-            )}
+                </div>
+            ))}
         </div>
     );
 };
 
+
+
+// This function runs on the server and gets the data for the page
 export async function getServerSideProps(context: NextPageContext): Promise<{ props: RickAndMortyProps }> {
     try {
         const res = await fetch('http://backend:4000/rickmorty', {
@@ -70,12 +85,28 @@ export async function getServerSideProps(context: NextPageContext): Promise<{ pr
               rick {
                 id
                 name
-                // ... other fields
+                status
+                species
+                type
+                gender
+                image
+                episode {
+                  id
+                  name
+                }
               }
               morties {
                 id
                 name
-                // ... other fields
+                status
+                species
+                type
+                gender
+                image
+                episode {
+                  id
+                  name
+                }
               }
             }
           }
@@ -86,22 +117,20 @@ export async function getServerSideProps(context: NextPageContext): Promise<{ pr
         const data = await res.json();
 
         if (!res.ok) {
-            const error = `Failed to fetch: ${res.status} ${res.statusText}`;
-            console.error('Response not ok:', res, 'Error:', error);
-            throw new Error(error);
+            console.error('Response not ok:', res);
+            console.error('Response details:', data); // Log the response body for more details
+            throw new Error(`Failed to fetch: ${res.status} ${res.statusText}`);
         }
 
         if (data.errors) {
-            const error = 'Failed to fetch GraphQL data.';
             console.error('GraphQL Errors:', data.errors);
-            throw new Error(error);
+            throw new Error('Failed to fetch GraphQL data.');
         }
 
         return {
             props: { data: data.data },
         };
     } catch (error) {
-        // Log the error for server-side debugging
         console.error('Error in getServerSideProps:', error);
         return {
             props: { errors: error instanceof Error ? error.message : 'An error occurred' },
