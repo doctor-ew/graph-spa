@@ -1,60 +1,36 @@
 import axios from 'axios';
 
 // Helper function to determine if a Rick and Morty should be associated
-const shouldAssociate = (rick: any, morty: any) => {
-    // Log the objects being compared
+const shouldAssociate = (rick:any, morty:any) => {
     console.log(`|-SA-| 0) Checking association for Rick: ${JSON.stringify(rick)} :: Morty: ${JSON.stringify(morty)}`);
 
     // Match by origin id
-    if (rick.origin?.id && morty.origin?.id) {
-
-        if (rick.origin.id === morty.origin.id) {
-            console.log(`|-SA-| 1) Comparing origin IDs: Rick: ${rick.origin.id} :: Morty: ${morty.origin.id}`);
-            return true;
-        }
+    if (rick.origin?.id && morty.origin?.id && rick.origin.id === morty.origin.id) {
+        console.log(`|-SA-| 1) Comparing origin IDs: Rick: ${rick.origin.id} :: Morty: ${morty.origin.id}`);
+        return true;
     }
 
-    // Match by origin name
-    if (rick.origin?.id && morty.origin?.id) {
-
-        if (rick.origin.id === morty.origin.id ) {
-            console.log(`|-SA-| 2) Comparing origin names: Rick: ${rick.origin.name} :: Morty: ${morty.origin.name}`);
-            return true;
-        }
-    }
-
-    // If origin is unknown, match by name pattern (e.g., "Glasses Rick" with "Glasses Morty")
+    // If origin is unknown, match by name pattern
     if (rick.origin?.name === 'unknown' && morty.origin?.name === 'unknown') {
         const rickNamePattern = rick.name.replace('Rick', '').trim();
         const mortyNamePattern = morty.name.replace('Morty', '').trim();
 
         if (rickNamePattern && mortyNamePattern && rickNamePattern === mortyNamePattern) {
-            console.log(`|-SA-| 3) Comparing name patterns: Rick: ${rickNamePattern} :: Morty: ${mortyNamePattern}`);
+            console.log(`|-SA-| 2) Comparing name patterns: Rick: ${rickNamePattern} :: Morty: ${mortyNamePattern}`);
             return true;
         }
     }
 
-    // Match by location id
-    if (rick.location?.id && morty.location?.id && morty.location) {
-
-        if (rick.location.id === morty.location.id && morty.location.id !== 3) {
-            console.log(`|-SA-| 4) Comparing location IDs: Rick: ${rick.location.id} :: Morty: ${morty.location.id}`);
-            return true;
-        }
+    // Match by location if both locations are known and not the Citadel of Ricks
+    if (rick.location?.id && morty.location?.id && rick.location.id === morty.location.id && rick.location.id !== '3') {
+        console.log(`|-SA-| 3) Comparing location IDs: Rick: ${rick.location.id} - ${rick.location.name} :: Morty: ${morty.location.id} - ${morty.location.name}`);
+        return true;
     }
 
-    // Match by location name
-    if (rick.location?.name && morty.location?.name) {
-        console.log(`|-SA-| Comparing location names: Rick: ${rick.location.name} :: Morty: ${morty.location.name}`);
-        if (rick.location.name === morty.location.name) return true;
-    }
-
-    // Log that no match was found
-    console.log(`|-SA-| 5) No match found for Rick: ${rick.name} :: Morty: ${morty.name}`);
-
-    // No match found
+    console.log(`|-SA-| 4) No match found for Rick: ${rick.name} :: Morty: ${morty.name}`);
     return false;
 };
+
 
 
 const rickMortyResolvers = {
