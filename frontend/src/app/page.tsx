@@ -6,20 +6,7 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div>
         <h1>Welcome to the GraphQL SPA</h1>
-        <nav>
-          <ul>
-            <li>
-              <Link href="/rick-and-morty">
-                <a>Rick and Morty</a>
-              </Link>
-            </li>
-            <li>
-              <Link href="/travel-data">
-                <a>Travel Data</a>
-              </Link>
-            </li>
-          </ul>
-        </nav>
+
       </div>
 
       <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
