@@ -7,6 +7,7 @@ interface Rick {
     name: string;
     origin: { id: string, name: string };
     location: { id: string, name: string };
+    image: string;
     // ... other fields
 }
 
@@ -15,6 +16,7 @@ interface Morty {
     name: string;
     origin: { id: string, name: string };
     location: { id: string, name: string };
+    image: string;
     // ... other fields
 }
 
@@ -34,7 +36,7 @@ interface RickAndMortyProps {
 
 
 // This is the React component that represents the page content
-const RickAndMortyPage: React.FC<RickAndMortyProps> = ({data, errors}) => {
+const RickAndMortyPage: React.FC<RickAndMortyProps> = ({ data, errors }) => {
     useEffect(() => {
         console.log('|-D-| data:', data);
         console.log('|-A-| data:', data?.rickAndMortyAssociations);
@@ -49,25 +51,35 @@ const RickAndMortyPage: React.FC<RickAndMortyProps> = ({data, errors}) => {
     }
 
     return (
-        <div>
-            <h1>Rick and Morty Data</h1>
-            {data?.rickAndMortyAssociations?.map((association, index) => (
-                <div key={association.rick.id}>
-                    <h2>Rick: {association.rick.name}</h2>
-                    <p>Origin: {association.rick.origin?.name}</p>
-                    <p>Location: {association.rick.location?.name}</p>
-                    {association.morties.length > 0 && (
-                        <>
-                            <h2>Associated Morty: {association.morties[0].name}</h2>
-                            <div key={association.morties[0].id}>
-                                <p>Origin: {association.morties[0].origin?.name}</p>
-                                <p>Location: {association.morties[0].location?.name}</p>
-                            </div>
-                        </>
-                    )}
-                </div>
-            ))}
-
+        <div className="container mx-auto p-4">
+            <h1 className="text-2xl font-bold mb-6">Rick and Morty Data</h1>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {data?.rickAndMortyAssociations?.map((association) => (
+                    <div key={association.rick.id} className="bg-white rounded-lg shadow-md p-4">
+                        <div className="bg-gray-200 rounded-lg overflow-hidden">
+                            {/* Using background image via CSS */}
+                            <div
+                                className="bg-cover bg-center h-48"
+                                style={{ backgroundImage: `url(${association.rick.image})` }}
+                            />
+                        </div>
+                        <dl className="mt-4">
+                            <dt className="font-semibold">Rick: {association.rick.name}</dt>
+                            <dd>Origin: {association.rick.origin?.name}</dd>
+                            <dd>Location: {association.rick.location?.name}</dd>
+                            {association.morties.length > 0 && (
+                                <div>
+                                    <dt className="font-semibold mt-2">Associated Morty: {association.morties[0].name}</dt>
+                                    <dd>
+                                        <p>Origin: {association.morties[0].origin?.name}</p>
+                                        <p>Location: {association.morties[0].location?.name}</p>
+                                    </dd>
+                                </div>
+                            )}
+                        </dl>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 };
