@@ -8,7 +8,6 @@ type Character {
     origin: Location
     location: Location
     image: String
-    episode: [Episode]
 }
 
 type Episode {
@@ -17,8 +16,8 @@ type Episode {
 }
 
 type Location {
-    id: ID!
-    name: String!
+    id: ID
+    name: String
 }
 
 type Query {

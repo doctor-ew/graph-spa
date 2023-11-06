@@ -1,20 +1,20 @@
-import React, { useEffect } from 'react';
-import { NextPageContext } from 'next';
+import React, {useEffect} from 'react';
+import {NextPageContext} from 'next';
 
 // Define the types for the data you expect
 interface Rick {
     id: string;
     name: string;
-    origin: {id:string,name:string};
-    location: {id:string,name:string};
+    origin: { id: string, name: string };
+    location: { id: string, name: string };
     // ... other fields
 }
 
 interface Morty {
     id: string;
     name: string;
-    origin: {id:string,name:string};
-    location: {id:string,name:string};
+    origin: { id: string, name: string };
+    location: { id: string, name: string };
     // ... other fields
 }
 
@@ -34,7 +34,7 @@ interface RickAndMortyProps {
 
 
 // This is the React component that represents the page content
-const RickAndMortyPage: React.FC<RickAndMortyProps> = ({ data, errors }) => {
+const RickAndMortyPage: React.FC<RickAndMortyProps> = ({data, errors}) => {
     useEffect(() => {
         console.log('|-D-| data:', data);
         console.log('|-A-| data:', data?.rickAndMortyAssociations);
@@ -48,31 +48,29 @@ const RickAndMortyPage: React.FC<RickAndMortyProps> = ({ data, errors }) => {
         return <div>Error: {errors}</div>;
     }
 
-
     return (
         <div>
             <h1>Rick and Morty Data</h1>
             {data?.rickAndMortyAssociations?.map((association, index) => (
                 <div key={association.rick.id}>
-                    <h2>Rick: {association.rick.id}</h2>
-                    <p>Name: {association.rick.name}</p>
+                    <h2>Rick: {association.rick.name}</h2>
                     <p>Origin: {association.rick.origin?.name}</p>
                     <p>Location: {association.rick.location?.name}</p>
-                    <h2>Associated Morties</h2>
-                    {association.morties.map((morty) => (
-                        <div key={morty.id}>
-                            <p>Name: {morty.name}</p>
-                            <p>Origin: {morty.origin?.name}</p>
-                            <p>Location: {morty.location?.name}</p>
-                        </div>
-                    ))}
+                    {association.morties.length > 0 && (
+                        <>
+                            <h2>Associated Morty: {association.morties[0].name}</h2>
+                            <div key={association.morties[0].id}>
+                                <p>Origin: {association.morties[0].origin?.name}</p>
+                                <p>Location: {association.morties[0].location?.name}</p>
+                            </div>
+                        </>
+                    )}
                 </div>
-
             ))}
+
         </div>
     );
 };
-
 
 
 // This function runs on the server and gets the data for the page
@@ -95,10 +93,15 @@ export async function getServerSideProps(context: NextPageContext): Promise<{ pr
                 type
                 gender
                 image
-                episode {
-                  id
-                  name
+               
+                origin {
+                    id
+                    name
                 }
+                location {
+                    id
+                    name
+                }    
               }
               morties {
                 id
@@ -108,10 +111,15 @@ export async function getServerSideProps(context: NextPageContext): Promise<{ pr
                 type
                 gender
                 image
-                episode {
-                  id
-                  name
+                
+                 origin {
+                    id
+                    name
                 }
+                location {
+                    id
+                    name
+                }    
               }
             }
           }
@@ -133,12 +141,12 @@ export async function getServerSideProps(context: NextPageContext): Promise<{ pr
         }
 
         return {
-            props: { data: data.data },
+            props: {data: data.data},
         };
     } catch (error) {
         console.error('Error in getServerSideProps:', error);
         return {
-            props: { errors: error instanceof Error ? error.message : 'An error occurred' },
+            props: {errors: error instanceof Error ? error.message : 'An error occurred'},
         };
     }
 }
