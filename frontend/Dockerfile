@@ -1,3 +1,4 @@
+# frontend Dockerfile
 # Use the official lightweight Node.js image.
 FROM node:20-alpine
 

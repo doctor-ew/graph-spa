@@ -1,3 +1,4 @@
+// /pages/rick-and-morty.tsx
 import React, { useEffect } from 'react';
 import { NextPageContext } from 'next';
 

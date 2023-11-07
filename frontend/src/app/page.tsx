@@ -9,8 +9,11 @@ export default function Home() {
         <nav>
           <ul>
             <li>
+              <Link href="/RickAndMorty">
+                <a>Rick and Morty App</a>
+              </Link>
               <Link href="/rick-and-morty">
-                <a>Rick and Morty</a>
+                <a>Rick and Morty Page</a>
               </Link>
             </li>
             <li>
